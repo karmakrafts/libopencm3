@@ -16,6 +16,5 @@ function(_genlink_preprocess TEMPLATE SCRIPT RESULT)
             ${_LOCM3_ARCH_FLAGS} ${_LOCM3_DEVICE_DEFS}
             -P -E ${TEMPLATE}
             -o ${SCRIPT}
-            RESULT_VARIABLE ${${RESULT}}
-    )
+            RESULT_VARIABLE ${RESULT})
 endfunction()
