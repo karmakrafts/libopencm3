@@ -11,7 +11,9 @@ include_guard(GLOBAL)
 cmake_minimum_required(VERSION 3.18)
 
 find_program(PYTHON_EXE python)
-
+if ("${PYTHON_EXE}" STREQUAL "PYTHON_EXE-NOTFOUND")
+    find_program(PYTHON_EXE python3) # Another attempt
+endif ()
 if ("${PYTHON_EXE}" STREQUAL "PYTHON_EXE-NOTFOUND")
     message(FATAL_ERROR "Libopencm3 MCU support requires Python!")
 endif ()
