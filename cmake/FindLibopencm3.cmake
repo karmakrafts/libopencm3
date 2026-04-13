@@ -1,12 +1,9 @@
-include_guard(GLOBAL)
-include(FindPackageHandleStandardArgs)
-
 #[=====================================[.rst
 FindLibopencm3
 --------------
 
 Finds the Libopencm3 library suitable for target device specified in variable
-DEVICE. You have to set this variable to full name of your MCU before calling
+LOCM3_DEVICE. You have to set this variable to full name of your MCU before calling
 find_package(Libopencm3) otherwise search will fail.
 
 
@@ -55,7 +52,9 @@ Result variables
   Root directory of Libopencm3. Always available.
 ]=====================================]
 
+include_guard(GLOBAL)
 cmake_minimum_required(VERSION 3.18)
+include(FindPackageHandleStandardArgs)
 
 set(_LOCM3_PKG_VARIABLES "")
 
@@ -80,59 +79,15 @@ if ("ld" IN_LIST Libopencm3_FIND_COMPONENTS)
     )
 endif ()
 
-if (NOT DEVICE)
+if (NOT LOCM3_DEVICE)
     message(FATAL_ERROR "No target device selected! "
-            "Please define variable DEVICE to contain *full* name of your MCU!")
+            "Please define variable LOCM3_DEVICE to contain *full* name of your MCU!")
 endif ()
 
 get_filename_component(Libopencm3_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 
 include(genlink)
-_genlink_obtain(${DEVICE} FAMILY _DEVICE_FAMILY)
-_genlink_obtain(${DEVICE} SUBFAMILY _DEVICE_SUBFAMILY)
-_genlink_obtain(${DEVICE} CPU _DEVICE_CPU)
-_genlink_obtain(${DEVICE} FPU _DEVICE_FPU)
-
-if ("${_DEVICE_FAMILY}" STREQUAL "")
-    message(FATAL_ERROR "${DEVICE} not found in ${_LOCM3_DATA_FILE}")
-endif ()
-
-# This essentially duplicates actions of genlink-config.mk
-set(_LOCM3_THUMB_DEVS
-        cortex-m0
-        cortex-m0plus
-        cortex-m3
-        cortex-m4
-        cortex-m7
-)
-
-set(_ARCH_FLAGS "")
-list(APPEND _ARCH_FLAGS -mcpu=${_DEVICE_CPU})
-
-# If the hosting toolchain uses Clang, we need to determine the target triple to invoke the preprocessor
-if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
-    if ("${_DEVICE_CPU}" STREQUAL "cortex-m0" OR "${_DEVICE_CPU}" STREQUAL "cortex-m0plus")
-        list(APPEND _ARCH_FLAGS --target=thumbv6m-none-eabi)
-    elseif ("${_DEVICE_CPU}" STREQUAL "cortex-m3")
-        list(APPEND _ARCH_FLAGS --target=thumbv7m-none-eabi)
-    elseif ("${_DEVICE_CPU}" STREQUAL "cortex-m4" OR "${_DEVICE_CPU}" STREQUAL "cortex-m7")
-        list(APPEND _ARCH_FLAGS --target=thumbv7em-none-eabi)
-    endif ()
-endif ()
-
-if ("${_DEVICE_CPU}" IN_LIST _LOCM3_THUMB_DEVS)
-    list(APPEND _ARCH_FLAGS -mthumb)
-endif ()
-
-if ("${_DEVICE_FPU}" STREQUAL "soft")
-    list(APPEND _ARCH_FLAGS -msoft-float)
-elseif ("${_DEVICE_FPU}" STREQUAL "hard-fpv4-sp-d16")
-    list(APPEND _ARCH_FLAGS -mfloat-abi=hard -mfpu=fpv4-sp-d16)
-elseif ("${_DEVICE_FPU}" STREQUAL "hard-fpv5-sp-d16")
-    list(APPEND _ARCH_FLAGS -mfloat-abi=hard -mfpu=fpv5-sp-d16)
-else ()
-    message(FATAL_ERROR "No match for the FPU flags")
-endif ()
+include(genlink_prepro)
 
 # Find library for given family or subfamily
 set(_LOCM3_LIBNAME
@@ -141,36 +96,33 @@ set(_LOCM3_LIBNAME
 )
 
 if ("ld" IN_LIST Libopencm3_FIND_COMPONENTS)
-    _genlink_obtain(${DEVICE} DEFS _DEVICE_DEFS)
+    _genlink_obtain(${LOCM3_DEVICE} DEFS _DEVICE_DEFS)
     string(REPLACE " " ";" _DEVICE_DEFS ${_DEVICE_DEFS})
 
-    set(Libopencm3_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/gen.${DEVICE}.ld)
+    set(Libopencm3_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/gen.${LOCM3_DEVICE}.ld)
 
     # If found, then generate the linker script
-    execute_process(COMMAND ${CMAKE_C_COMPILER}
-            ${_ARCH_FLAGS} ${_DEVICE_DEFS}
-            -P -E ${Libopencm3_ROOT_DIR}/ld/linker.ld.S
-            -o ${Libopencm3_LINKER_SCRIPT}
-            RESULT_VARIABLE CPP_RESULT
-    )
+    _genlink_preprocess(${Libopencm3_ROOT_DIR}/ld/linker.ld.S
+            ${Libopencm3_LINKER_SCRIPT}
+            CPP_RESULT)
 
     if (NOT "${CPP_RESULT}" EQUAL "0")
-        message(FATAL_ERROR "Unable to generate linker script for device ${DEVICE}")
+        message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}")
     else ()
         set(Libopencm3_ld_FOUND TRUE)
     endif ()
 endif ()
 
 if ("hal" IN_LIST Libopencm3_FIND_COMPONENTS)
-    _genlink_obtain(${DEVICE} CPPFLAGS Libopencm3_DEFINITIONS)
+    _genlink_obtain(${LOCM3_DEVICE} CPPFLAGS Libopencm3_DEFINITIONS)
     foreach (LOCM3_CANDIDATE ${_LOCM3_LIBNAME})
         if (EXISTS ${Libopencm3_ROOT_DIR}/lib/lib${LOCM3_CANDIDATE}.a)
             # Provide exported variables
             set(Libopencm3_LIBRARY ${LOCM3_CANDIDATE})
             set(Libopencm3_LIBRARY_DIRS ${Libopencm3_ROOT_DIR}/lib)
             set(Libopencm3_INCLUDE_DIRS ${Libopencm3_ROOT_DIR}/include)
-            set(Libopencm3_DEFINITIONS ${Libopencm3_DEFINITIONS} ${_ARCH_FLAGS})
-            set(Libopencm3_LINK_OPTIONS -static -nostartfiles ${_ARCH_FLAGS})
+            set(Libopencm3_DEFINITIONS ${Libopencm3_DEFINITIONS} ${_LOCM3_ARCH_FLAGS})
+            set(Libopencm3_LINK_OPTIONS -static -nostartfiles ${_LOCM3_ARCH_FLAGS})
 
             if ("ld" IN_LIST Libopencm3_FIND_COMPONENTS)
                 list(APPEND Libopencm3_LINK_OPTIONS -T${Libopencm3_LINKER_SCRIPT})
@@ -183,16 +135,8 @@ if ("hal" IN_LIST Libopencm3_FIND_COMPONENTS)
                         PROPERTIES
                         IMPORTED_LOCATION ${Libopencm3_LIBRARY_DIRS}/lib${Libopencm3_LIBRARY}.a
                         INTERFACE_INCLUDE_DIRECTORIES ${Libopencm3_INCLUDE_DIRS}
-                )
-
-                set_property(TARGET Libopencm3::Libopencm3
-                        PROPERTY INTERFACE_COMPILE_OPTIONS
-                        ${Libopencm3_DEFINITIONS}
-                )
-
-                set_property(TARGET Libopencm3::Libopencm3
-                        PROPERTY INTERFACE_LINK_OPTIONS
-                        ${Libopencm3_LINK_OPTIONS}
+                        INTERFACE_COMPILE_OPTIONS ${Libopencm3_DEFINITIONS}
+                        INTERFACE_LINK_OPTIONS ${Libopencm3_LINK_OPTIONS}
                 )
             endif ()
             set(Libopencm3_hal_FOUND TRUE)
