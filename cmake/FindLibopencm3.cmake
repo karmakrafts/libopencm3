@@ -131,10 +131,13 @@ if ("hal" IN_LIST Libopencm3_FIND_COMPONENTS)
                 set_target_properties(Libopencm3::Libopencm3
                         PROPERTIES
                         IMPORTED_LOCATION ${Libopencm3_LIBRARY_DIRS}/lib${Libopencm3_LIBRARY}.a
-                        INTERFACE_INCLUDE_DIRECTORIES ${Libopencm3_INCLUDE_DIRS}
-                        INTERFACE_COMPILE_OPTIONS ${Libopencm3_DEFINITIONS}
-                        INTERFACE_LINK_OPTIONS ${Libopencm3_LINK_OPTIONS}
-                )
+                        INTERFACE_INCLUDE_DIRECTORIES ${Libopencm3_INCLUDE_DIRS})
+                set_property(TARGET Libopencm3::Libopencm3
+                        PROPERTY INTERFACE_COMPILE_OPTIONS
+                        ${Libopencm3_DEFINITIONS})
+                set_property(TARGET Libopencm3::Libopencm3
+                        PROPERTY INTERFACE_LINK_OPTIONS
+                        ${Libopencm3_LINK_OPTIONS})
             endif ()
             set(Libopencm3_hal_FOUND TRUE)
             break()
