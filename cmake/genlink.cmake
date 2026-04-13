@@ -10,7 +10,13 @@ Assumes that `Libopencm3_ROOT_DIR` is defined by the time this is included.
 include_guard(GLOBAL)
 cmake_minimum_required(VERSION 3.18)
 
-find_program(PYTHON_EXE python python2 python3)
+find_program(PYTHON_EXE
+        /usr/bin/python3
+        /usr/bin/python2
+        /usr/bin/python
+        python3
+        python2
+        python)
 if ("${PYTHON_EXE}" STREQUAL "PYTHON_EXE-NOTFOUND")
     message(FATAL_ERROR "Libopencm3 MCU support requires Python!")
 endif ()
