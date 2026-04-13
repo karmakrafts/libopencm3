@@ -7,9 +7,9 @@ Assumes that `Libopencm3_ROOT_DIR` is defined by the time this is included.
 
 ]=====================================]
 
+include_guard(GLOBAL)
 cmake_minimum_required(VERSION 3.18)
 
-include_guard(GLOBAL)
 find_program(PYTHON_EXE python)
 
 if ("${PYTHON_EXE}" STREQUAL "PYTHON_EXE-NOTFOUND")

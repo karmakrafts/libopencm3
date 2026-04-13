@@ -6,8 +6,8 @@ Automatically builds libopencm3 as part of your CMake project and exposes it via
 
 ]=====================================]
 
-cmake_minimum_required(VERSION 3.18)
 include_guard(GLOBAL)
+cmake_minimum_required(VERSION 3.18)
 
 # Re-defined by find module, but we need it here BEFORE including the find module
 get_filename_component(Libopencm3_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
