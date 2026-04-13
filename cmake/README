@@ -96,12 +96,3 @@ APPEND PROPERTY INTERFACE_LINK_OPTIONS -T${path_to_your_linker_script}
 add_link_options(-T${path_to_your_linker_script})
 
 <<<<<<
-
-Libopencm3.cmake
-----------------
-
-When using Libopencm3.cmake instead of the find module directly,
-the same rules as above apply.
-
-Before including Libopencm3.cmake, the `LOCM3_VERSION` variable needs to be set to a valid
-branch, tag or commit hash from the libopencm3 repository.
