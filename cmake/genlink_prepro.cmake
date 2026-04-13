@@ -17,5 +17,5 @@ function(_genlink_preprocess TEMPLATE SCRIPT RESULT)
             -P -E ${TEMPLATE}
             -o ${SCRIPT}
             RESULT_VARIABLE ${RESULT}
-            OUTPUT_VARIABLE ${${RESULT}_OUTPUT})
+            OUTPUT_VARIABLE ${RESULT}_OUTPUT)
 endfunction()
