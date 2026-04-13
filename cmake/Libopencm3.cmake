@@ -41,7 +41,6 @@ include(genlink)
 ProcessorCount(_LOCM3_NUM_THREADS)
 
 _genlink_obtain(${LOCM3_DEVICE} CPPFLAGS Libopencm3_DEFINITIONS)
-_genlink_obtain(${LOCM3_DEVICE} FAMILY _LOCM3_DEVICE_FAMILY) # Also kind of redundant but needed because of inclusion order
 set(Libopencm3_DEFINITIONS ${Libopencm3_DEFINITIONS} ${_LOCM3_ARCH_FLAGS})
 
 set(Libopencm3_FOUND TRUE)
