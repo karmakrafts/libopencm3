@@ -73,9 +73,11 @@ add_custom_target(Libopencm3_build
         COMMAND ${CMAKE_MAKE_PROGRAM} TARGETS=${_LOCM3_BUILD_TARGET} -j ${_LOCM3_NUM_THREADS}
         WORKING_DIRECTORY ${Libopencm3_ROOT_DIR})
 
-_genlink_preprocess(${Libopencm3_ROOT_DIR}/ld/linker.ld.S
-        ${Libopencm3_LINKER_SCRIPT}
-        CPP_RESULT)
+execute_process(COMMAND ${CMAKE_C_COMPILER}
+        ${_LOCM3_ARCH_FLAGS} ${_LOCM3_DEVICE_DEFS}
+        -P -E ${Libopencm3_ROOT_DIR}/ld/linker.ld.S
+        -o ${Libopencm3_LINKER_SCRIPT}
+        RESULT_VARIABLE CPP_RESULT)
 if (NOT "${CPP_RESULT}" EQUAL "0")
     message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}: ${CPP_RESULT_OUTPUT}")
 endif ()

@@ -99,12 +99,13 @@ if ("ld" IN_LIST Libopencm3_FIND_COMPONENTS)
     set(Libopencm3_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/gen.${LOCM3_DEVICE}.ld)
 
     # If found, then generate the linker script
-    _genlink_preprocess(${Libopencm3_ROOT_DIR}/ld/linker.ld.S
-            ${Libopencm3_LINKER_SCRIPT}
-            CPP_RESULT)
-
+    execute_process(COMMAND ${CMAKE_C_COMPILER}
+            ${_LOCM3_ARCH_FLAGS} ${_LOCM3_DEVICE_DEFS}
+            -P -E ${Libopencm3_ROOT_DIR}/ld/linker.ld.S
+            -o ${Libopencm3_LINKER_SCRIPT}
+            RESULT_VARIABLE CPP_RESULT)
     if (NOT "${CPP_RESULT}" EQUAL "0")
-        message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}: ${CPP_RESULT_OUTPUT}")
+        message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}")
     else ()
         set(Libopencm3_ld_FOUND TRUE)
     endif ()
