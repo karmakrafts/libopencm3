@@ -84,8 +84,8 @@ endif ()
 
 add_library(Libopencm3::Libopencm3 STATIC IMPORTED)
 set_target_properties(Libopencm3::Libopencm3 PROPERTIES
-        IMPORTED_LOCATION "lib${Libopencm3_LIBRARY}.a"
-        INTERFACE_INCLUDE_DIRECTORIES "${Libopencm3_INCLUDE_DIRS}"
-        INTERFACE_COMPILE_OPTIONS "${Libopencm3_DEFINITIONS}"
-        INTERFACE_LINK_OPTIONS "${Libopencm3_LINK_OPTIONS}")
+        IMPORTED_LOCATION lib${Libopencm3_LIBRARY}.a
+        INTERFACE_INCLUDE_DIRECTORIES ${Libopencm3_INCLUDE_DIRS}
+        INTERFACE_COMPILE_OPTIONS ${Libopencm3_DEFINITIONS}
+        INTERFACE_LINK_OPTIONS ${Libopencm3_LINK_OPTIONS})
 add_dependencies(Libopencm3::Libopencm3 Libopencm3_build)
