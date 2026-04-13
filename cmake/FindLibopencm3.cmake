@@ -104,7 +104,7 @@ if ("ld" IN_LIST Libopencm3_FIND_COMPONENTS)
             CPP_RESULT)
 
     if (NOT "${CPP_RESULT}" EQUAL "0")
-        message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}")
+        message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}: ${CPP_RESULT_OUTPUT}")
     else ()
         set(Libopencm3_ld_FOUND TRUE)
     endif ()

@@ -77,7 +77,7 @@ _genlink_preprocess(${Libopencm3_ROOT_DIR}/ld/linker.ld.S
         ${Libopencm3_LINKER_SCRIPT}
         CPP_RESULT)
 if (NOT "${CPP_RESULT}" EQUAL "0")
-    message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}")
+    message(FATAL_ERROR "Unable to generate linker script for device ${LOCM3_DEVICE}: ${CPP_RESULT_OUTPUT}")
 endif ()
 
 # Add library
