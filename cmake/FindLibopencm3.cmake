@@ -96,9 +96,6 @@ set(_LOCM3_LIBNAME
 )
 
 if ("ld" IN_LIST Libopencm3_FIND_COMPONENTS)
-    _genlink_obtain(${LOCM3_DEVICE} DEFS _DEVICE_DEFS)
-    string(REPLACE " " ";" _DEVICE_DEFS ${_DEVICE_DEFS})
-
     set(Libopencm3_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/gen.${LOCM3_DEVICE}.ld)
 
     # If found, then generate the linker script
