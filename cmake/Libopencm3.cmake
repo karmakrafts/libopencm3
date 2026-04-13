@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.18)
 
 get_filename_component(Libopencm3_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 include(ProcessorCount)
-include(genlink_prepro)
+include(genlink)
 ProcessorCount(_LOCM3_NUM_THREADS)
 
 _genlink_obtain(${LOCM3_DEVICE} CPPFLAGS Libopencm3_DEFINITIONS)

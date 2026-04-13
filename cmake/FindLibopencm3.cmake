@@ -87,7 +87,6 @@ endif ()
 get_filename_component(Libopencm3_ROOT_DIR "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 
 include(genlink)
-include(genlink_prepro)
 
 # Find library for given family or subfamily
 set(_LOCM3_LIBNAME
