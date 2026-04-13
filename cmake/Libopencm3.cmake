@@ -41,21 +41,21 @@ include(genlink)
 ProcessorCount(_LOCM3_NUM_THREADS)
 
 _genlink_obtain(${LOCM3_DEVICE} CPPFLAGS Libopencm3_DEFINITIONS)
+_genlink_obtain(${LOCM3_DEVICE} FAMILY _LOCM3_DEVICE_FAMILY) # Also kind of redundant but needed because of inclusion order
 set(Libopencm3_DEFINITIONS ${Libopencm3_DEFINITIONS} ${_LOCM3_ARCH_FLAGS})
 
 set(Libopencm3_FOUND TRUE)
 set(Libopencm3_ld_FOUND TRUE)
-set(Libopencm3_LIBRARY)
+set(Libopencm3_LIBRARY "opencm3_${_LOCM3_DEVICE_FAMILY}")
 set(Libopencm3_LIBRARY_DIRS ${Libopencm3_ROOT_DIR}/lib)
 set(Libopencm3_INCLUDE_DIRS ${Libopencm3_ROOT_DIR}/include)
 set(Libopencm3_LINK_OPTIONS -static -nostartfiles ${_LOCM3_ARCH_FLAGS})
-set(Libopencm3_LINKER_SCRIPT)
+set(Libopencm3_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/gen.${LOCM3_DEVICE}.ld)
 
 # Load all available targets from the targets file
 file(STRINGS "${Libopencm3_ROOT_DIR}/targets" _LOCM3_TARGETS)
 
 # Use genlink to find the correct build target by family identification
-_genlink_obtain(${LOCM3_DEVICE} FAMILY _LOCM3_DEVICE_FAMILY) # Also kind of redundant but needed because of inclusion order
 foreach (target IN LISTS _LOCM3_TARGETS)
     string(REPLACE "/" "" clean_target "${target}")
     if (NOT "${_LOCM3_DEVICE_FAMILY}" STREQUAL "${clean_target}")
@@ -85,7 +85,7 @@ endif ()
 
 add_library(Libopencm3::Libopencm3 STATIC IMPORTED)
 set_target_properties(Libopencm3::Libopencm3 PROPERTIES
-        IMPORTED_LOCATION "libopencm3_${_LOCM3_DEVICE_FAMILY}.a"
+        IMPORTED_LOCATION "lib${Libopencm3_LIBRARY}.a"
         INTERFACE_INCLUDE_DIRECTORIES "${Libopencm3_INCLUDE_DIRS}"
         INTERFACE_COMPILE_OPTIONS "${Libopencm3_DEFINITIONS}"
         INTERFACE_LINK_OPTIONS "${Libopencm3_LINK_OPTIONS}")
