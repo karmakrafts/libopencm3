@@ -64,6 +64,7 @@ nbproject/
 locm3.sublime-workspace
 .cproject
 .settings
+buildDir/
 
 # cscope databases
 cscope.out
