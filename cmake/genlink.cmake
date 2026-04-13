@@ -12,10 +12,8 @@ cmake_minimum_required(VERSION 3.18)
 
 find_program(PYTHON_EXE
         /usr/bin/python3
-        /usr/bin/python2
         /usr/bin/python
         python3
-        python2
         python)
 if ("${PYTHON_EXE}" STREQUAL "PYTHON_EXE-NOTFOUND")
     message(FATAL_ERROR "Libopencm3 MCU support requires Python!")
