@@ -73,7 +73,7 @@ set(_LOCM3_THUMB_DEVS
         cortex-m7)
 
 set(_LOCM3_ARCH_FLAGS "")
-list(APPEND _LOCM3_ARCH_FLAGS -mcpu=${_DEVICE_CPU})
+list(APPEND _LOCM3_ARCH_FLAGS -mcpu=${_LOCM3_DEVICE_CPU})
 
 # If the hosting toolchain uses Clang, we need to determine the target triple to invoke the preprocessor
 if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
